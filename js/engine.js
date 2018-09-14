@@ -23,12 +23,14 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+        allEnemies = [],
+        enemyCounter = 0;
 
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
-    var player = new Player(canvas, 81, 100);
+    var player = new Player(canvas, 81, 100, 101,171, 'images/char-boy.png');
     document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -39,6 +41,15 @@ var Engine = (function(global) {
 
         player.handleInput(allowedKeys[e.keyCode], document.getElementsByTagName('canvas')[0]);
     });
+
+
+    while(enemyCounter< 3){
+        enemyCounter+= 1;
+        setTimeout(()=>{
+            allEnemies.push(new Enemy())
+        },Math.random() *(3000 - 500) + 500);
+    }
+
 
 
     /* This function serves as the kickoff point for the game loop itself
@@ -92,7 +103,32 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+    }
+    function checkCollisions(){
+        allEnemies.forEach(function(enemy){
+            var itemWithLowerY = getItemWithLowerY(player, enemy);
+            var otherItem;
+            if(itemWithLowerY === player){
+                otherItem = enemy;
+            }else{
+                otherItem = player;
+            }
+            console.log(otherItem.getY(),  itemWithLowerY.getY() + itemWithLowerY.getHeight())
+            // alert()
+            if(otherItem.getY() < itemWithLowerY.getY() + itemWithLowerY.getHeight()){
+                console.log('jdssdsdjksjdsjk')
+
+            }
+
+
+        })
+    }
+    function getItemWithLowerY(item1, item2){
+        if(item1.getY() < item2.getY()){
+            return item1;
+        }
+        return item2;
     }
 
     /* This is called by the update function and loops through all of the

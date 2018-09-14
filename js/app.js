@@ -1,19 +1,33 @@
 // Enemies our player must avoid
 
- function Enemy (maxSpeed = 500, minSpeed = 100) {
+ function Enemy (width=157, height=101, maxSpeed = 500, minSpeed = 100) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+    this.width = width;
+    this.height = height;
     this.maxSpeed = maxSpeed;
     this.minSpeed = minSpeed;
     this.sprite = 'images/enemy-bug.png';
     this.initPosition(maxSpeed, minSpeed);
 };
+Enemy.prototype.getY = function(){
+    return this.y;
+}
+Enemy.prototype.getX = function(){
+    return this.x;
+}
+Enemy.prototype.getWidth = function(){
+    return this.width;
+}
+Enemy.prototype.getHeight = function(){
+    return this.height;
+}
 
 Enemy.prototype.initPosition = function(maxSpeed, minSpeed){
-    this.y = 200;
-    this.x = 0;
+    this.y = Math.random() *(500 - 320)+70;
+    this.x =-100;
     this.speed = Math.floor(Math.random() *(maxSpeed - minSpeed) + minSpeed);
 }
 // Update the enemy's position, required method for game
@@ -24,7 +38,7 @@ Enemy.prototype.update = function(dt, canvas, allEnemies) {
         if(this.x > canvas.width){
             setTimeout(()=>{
                 this.initPosition(this.maxSpeed, this.minSpeed);
-            },Math.random() *(4000 - 500) + 500);
+            },Math.random() *(3000 - 500) + 500);
         }
     }
 
@@ -48,21 +62,35 @@ Enemy.prototype.render = function() {
 // Place the player object in a variable called player
 
 
-function Player(canvas, yMove, xMove) {
+function Player(canvas, yMove, xMove, width, height, image) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
 
-    this.sprite = 'images/char-boy.png';
+    this.sprite = image;
     this.yMove = yMove;
     this.xMove = xMove;
+    this.width = width;
+    this.height = height; 
     this.x;
     this.y;
     this.timesCrossed = 0;
     this.initPosition(canvas);
 };
-Player.prototype.initPosition = function(canvas, x=(canvas.width/2)-50, y = canvas.height-200){
+Player.prototype.getY = function(){
+    return this.y;
+}
+Player.prototype.getX = function(){
+    return this.x;
+}
+Player.prototype.getWidth = function(){
+    return this.width;
+}
+Player.prototype.getHeight = function(){
+    return this.height;
+}
+Player.prototype.initPosition = function(canvas, x=(canvas.width/2)-35, y = canvas.height-150){
     this.x = x;
     this.y = y;
 }
@@ -82,8 +110,9 @@ Player.prototype.update = function(dt) {
 };
 Player.prototype.handleInput = function(direction, canvas) {
     if(direction == 'up'){
+        console.log(this.y + this.yMove)
         if(!this.possiblePosition(canvas, this.x, this.y- this.yMove)){
-            this.initPosition(canvas, this.x,canvas.height-200);
+            this.initPosition(canvas, this.x,canvas.height-150);
             this.timesCrossed +=1
             console.log(this.timesCrossed)
         }else{
@@ -107,7 +136,9 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-let allEnemies = [new Enemy(), new Enemy(),new Enemy()];
+
+
+
 
 
 
