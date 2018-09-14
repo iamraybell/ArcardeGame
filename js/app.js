@@ -1,21 +1,33 @@
 // Enemies our player must avoid
-let allEnemies = [new Enemy(),new Enemy(), new Enemy()];
+
  function Enemy (maxSpeed = 500, minSpeed = 100) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+    this.maxSpeed = maxSpeed;
+    this.minSpeed = minSpeed;
+    this.sprite = 'images/enemy-bug.png';
+    this.initPosition(maxSpeed, minSpeed);
+};
+
+Enemy.prototype.initPosition = function(maxSpeed, minSpeed){
     this.y = 200;
     this.x = 0;
     this.speed = Math.floor(Math.random() *(maxSpeed - minSpeed) + minSpeed);
-    this.sprite = 'images/enemy-bug.png';
-};
-
+}
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    this.x += dt* this.speed;
+Enemy.prototype.update = function(dt, canvas, allEnemies) {
+    if(this.x < canvas.width){
+        this.x += dt* this.speed;
+        if(this.x > canvas.width){
+            setTimeout(()=>{
+                this.initPosition(this.maxSpeed, this.minSpeed);
+            },Math.random() *(4000 - 500) + 500);
+        }
+    }
+
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -35,17 +47,31 @@ Enemy.prototype.render = function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-var player = new Player();
-function Player() {
+
+function Player(canvas, yMove, xMove) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
+
     this.sprite = 'images/char-boy.png';
-    this.x = 200;
-    this.y = 400
+    this.yMove = yMove;
+    this.xMove = xMove;
+    this.x;
+    this.y;
+    this.timesCrossed = 0;
+    this.initPosition(canvas);
 };
+Player.prototype.initPosition = function(canvas, x=(canvas.width/2)-50, y = canvas.height-200){
+    this.x = x;
+    this.y = y;
+}
+Player.prototype.possiblePosition = function(canvas, x, y){
+    if(x > 0 && y >-10 && x <canvas.width-50 && y < canvas.height-150){
+        return true;
+    }
+    return false;
+}
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -54,18 +80,25 @@ Player.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
 };
-Player.prototype.handleInput = function(direction) {
+Player.prototype.handleInput = function(direction, canvas) {
     if(direction == 'up'){
-        this.y -= 85;
+        if(!this.possiblePosition(canvas, this.x, this.y- this.yMove)){
+            this.initPosition(canvas, this.x,canvas.height-200);
+            this.timesCrossed +=1
+            console.log(this.timesCrossed)
+        }else{
+            this.y -= this.yMove;
+        }
+
     }
-    if(direction == 'down'){
-        this.y += 85;
+    if(direction == 'down' && this.possiblePosition(canvas, this.x, this.y+ this.yMove)){
+        this.y += this.yMove;
     }
-    if(direction == 'left'){
-        this.x -= 100;
+    if(direction == 'left'&& this.possiblePosition(canvas, this.x- this.xMove, this.y)){
+        this.x -= this.xMove;
     }
-    if(direction == 'right'){
-        this.x += 100;
+    if(direction == 'right' && this.possiblePosition(canvas, this.x+ this.xMove, this.y)){
+        this.x += this.xMove;
     }
 };
 
@@ -74,17 +107,9 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+let allEnemies = [new Enemy(), new Enemy(),new Enemy()];
+
 
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
-
-    player.handleInput(allowedKeys[e.keyCode]);
-});
