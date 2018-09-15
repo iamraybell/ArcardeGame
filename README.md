@@ -12,7 +12,7 @@ A html5 canvas based game. This game is based on the classic game, Frogger.
 * Right arrow -> Moves right
 
 ### How to Play
-Using the keys mentioned in the button section, your goal is to get you character into the water. If you get bitten by a bug, your Times Bitten counter will increace, and you will start over. If you successfully cross, your times crossed counter will increase.
+Using the keys mentioned in the button section, your goal is to get you character into the water. If you get bitten by a bug, your times bitten counter will increace, and you will start over. If you successfully cross, your times crossed counter will increase.
 
 
 ### Built With
