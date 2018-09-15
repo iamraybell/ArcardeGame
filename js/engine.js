@@ -9,7 +9,7 @@
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
  *
- * This engine makes the canvas' context (ctx) object globally available to make 
+ * This engine makes the canvas' context (ctx) object globally available to make
  * writing app.js a little simpler to work with.
  */
 
@@ -30,7 +30,7 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
-    var player = new Player(canvas, 81, 100, 101,171, 'images/char-boy.png');
+    var player = new Player(canvas, 81, 100, 68,88, 'images/char-boy.png');
     document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -42,15 +42,12 @@ var Engine = (function(global) {
         player.handleInput(allowedKeys[e.keyCode], document.getElementsByTagName('canvas')[0]);
     });
 
-
     while(enemyCounter< 3){
         enemyCounter+= 1;
         setTimeout(()=>{
             allEnemies.push(new Enemy())
         },Math.random() *(3000 - 500) + 500);
     }
-
-
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -102,9 +99,17 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
+        appendPlayerInfo();
         updateEntities(dt);
         checkCollisions();
     }
+
+    function appendPlayerInfo(){
+        var div = document.getElementById('info');
+        div.innerHTML = `<p id ='info'><strong>Times crossed: </strong> ${player.timesCrossed} | <strong> Times bitten:</strong> ${player.timesBitten}</p>`
+    }
+
+    //this function checks to see if player collides with enemy
     function checkCollisions(){
         allEnemies.forEach(function(enemy){
             var itemWithLowerY = getItemWithLowerY(player, enemy);
@@ -114,16 +119,18 @@ var Engine = (function(global) {
             }else{
                 otherItem = player;
             }
-            console.log(otherItem.getY(),  itemWithLowerY.getY() + itemWithLowerY.getHeight())
-            // alert()
-            if(otherItem.getY() < itemWithLowerY.getY() + itemWithLowerY.getHeight()){
-                console.log('jdssdsdjksjdsjk')
 
+            if(Math.floor(itemWithLowerY.getY() +itemWithLowerY.getHeight())-30>=  Math.floor(otherItem.getY()) &&
+                Math.floor(otherItem.getX() + otherItem.getWidth()) >= Math.floor(itemWithLowerY.getX()) &&
+                Math.floor(otherItem.getX()) <= Math.floor(itemWithLowerY.getWidth() +itemWithLowerY.getX())
+                ){
+                player.timesBitten +=1;
+                player.initPosition(canvas);
             }
-
-
         })
     }
+
+    //This function compares two items and returns the one with the lower y coordinate.
     function getItemWithLowerY(item1, item2){
         if(item1.getY() < item2.getY()){
             return item1;
@@ -166,7 +173,7 @@ var Engine = (function(global) {
             numRows = 6,
             numCols = 5,
             row, col;
-        
+
         // Before drawing, clear existing canvas
         ctx.clearRect(0,0,canvas.width,canvas.height)
 
