@@ -16,10 +16,9 @@ Using the keys mentioned in the button section, your goal is to get you characte
 
 
 ### Built With
-* HTML5
+* HTML5 Cavans
 * CSS
 * Javascript
-* npm
 
 
 ### Authors
